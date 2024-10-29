@@ -104,7 +104,7 @@ export const getUserDetails = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid user id");
   }
 
-  const user = await User.findById(userId).select("-password -credits");
+  const user = await User.findById(userId).select("-password ");
 
   if (!user) {
     throw new ApiError(404, "User not found");
