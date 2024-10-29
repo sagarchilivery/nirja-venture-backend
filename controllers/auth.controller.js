@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import asyncHandler from "../helpers/async_handler.js";
 import {
   cypherPassword,
@@ -33,13 +34,20 @@ export const signup = asyncHandler(async (req, res) => {
 
   await newUser.save();
 
-  generateTokenAndSetCookie(
+  const token = generateTokenAndSetCookie(
     { id: newUser._id, email: newUser.email, username: newUser.username },
     res
   );
 
   res.json(
-    new ApiResponse(200, { username, email }, "User created successfully")
+    new ApiResponse(
+      200,
+      {
+        user: { username, email, id: newUser._id, credits: newUser.credits },
+        token,
+      },
+      "User created successfully"
+    )
   );
 });
 
@@ -62,15 +70,45 @@ export const signin = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid credentials");
   }
 
-  generateTokenAndSetCookie(
+  const token = generateTokenAndSetCookie(
     { id: user._id, email: user.email, username: user.username },
     res
   );
 
-  res.json(new ApiResponse(200, { email, password }));
+  res.json(
+    new ApiResponse(
+      200,
+      {
+        user: {
+          email,
+          username: user.username,
+          id: user._id,
+          credits: user.credits,
+        },
+        token,
+      },
+      "User signed in successfully"
+    )
+  );
 });
 
 export const signout = async (req, res) => {
   res.clearCookie("token");
   res.json(new ApiResponse(200, {}, "User signed out successfully"));
 };
+
+export const getUserDetails = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+
+  if (!isValidObjectId(userId)) {
+    throw new ApiError(400, "Invalid user id");
+  }
+
+  const user = await User.findById(userId).select("-password -credits");
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  res.json(new ApiResponse(200, user, "User details retrieved successfully"));
+});

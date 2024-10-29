@@ -11,6 +11,8 @@ const generateTokenAndSetCookie = (data, res) => {
     sameSite: "strict", // Prevent CSRF attacks
     secure: process.env.NODE_ENV !== "development",
   });
+
+  return token;
 };
 
 export default generateTokenAndSetCookie;
