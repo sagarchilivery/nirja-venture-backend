@@ -51,7 +51,7 @@ export const signup = asyncHandler(async (req, res) => {
         user: { username, email, id: newUser._id, credits: newUser.credits },
         token,
       },
-      "User created successfully"
+      "User registered successfully"
     )
   );
 });
@@ -92,7 +92,7 @@ export const signin = asyncHandler(async (req, res) => {
         },
         token,
       },
-      "User signed in successfully"
+      "User logged in successfully"
     )
   );
 });
@@ -104,7 +104,7 @@ export const signout = async (req, res) => {
     sameSite: "strict",
     path: "/",
   });
-  res.json(new ApiResponse(200, {}, "User signed out successfully"));
+  res.json(new ApiResponse(200, {}, "User logged out successfully"));
 };
 
 export const getUserDetails = asyncHandler(async (req, res) => {
