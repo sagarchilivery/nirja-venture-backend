@@ -10,6 +10,7 @@ const generateTokenAndSetCookie = (data, res) => {
     httpOnly: true, // Prevent XSS attacks
     sameSite: "strict", // Prevent CSRF attacks
     secure: process.env.NODE_ENV !== "development",
+    path: "/",
   });
 
   return token;

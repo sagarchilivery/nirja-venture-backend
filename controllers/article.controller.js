@@ -169,6 +169,12 @@ export const getUserArticles = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid user id");
   }
 
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
   const articles = await Article.find({ author: userId })
     .populate("author", "-password -credits")
     .sort({ createdAt: -1 });

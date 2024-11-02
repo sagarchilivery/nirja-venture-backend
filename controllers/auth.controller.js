@@ -35,7 +35,12 @@ export const signup = asyncHandler(async (req, res) => {
   await newUser.save();
 
   const token = generateTokenAndSetCookie(
-    { id: newUser._id, email: newUser.email, username: newUser.username },
+    {
+      id: newUser._id,
+      email: newUser.email,
+      username: newUser.username,
+      role: "user",
+    },
     res
   );
 
@@ -71,7 +76,7 @@ export const signin = asyncHandler(async (req, res) => {
   }
 
   const token = generateTokenAndSetCookie(
-    { id: user._id, email: user.email, username: user.username },
+    { id: user._id, email: user.email, username: user.username, role: "user" },
     res
   );
 
@@ -93,7 +98,12 @@ export const signin = asyncHandler(async (req, res) => {
 });
 
 export const signout = async (req, res) => {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV !== "development",
+    sameSite: "strict",
+    path: "/",
+  });
   res.json(new ApiResponse(200, {}, "User signed out successfully"));
 };
 

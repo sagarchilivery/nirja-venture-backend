@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import { AuthRoutes } from "./routes/auth.routes.js";
 import { ArticleRoutes } from "./routes/article.routes.js";
 import cookieParser from "cookie-parser";
+import { adminRoutes } from "./routes/admin.routes.js";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(cookieParser());
 // Routes
 app.use("/auth", AuthRoutes);
 app.use("/articles", ArticleRoutes);
+app.use("/admin", adminRoutes);
 
 // Connect to MongoDB
 mongoose

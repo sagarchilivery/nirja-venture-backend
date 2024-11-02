@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../helpers/error_handler.js";
+import asyncHandler from "../helpers/async_handler.js";
 
-const VerifyToken = async (req, res, next) => {
+export const verifyToken = asyncHandler(async (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) {
@@ -30,6 +31,19 @@ const VerifyToken = async (req, res, next) => {
     console.log("Error in protectRoute middleware: ", error.message);
     return res.json(new ApiError(500, null, "Internal server error"));
   }
-};
+});
 
-export default VerifyToken;
+export const verifyAdmin = asyncHandler(async (req, res, next) => {
+  if (!req.user) {
+    return res.json(
+      new ApiError(401, null, "Unauthorized - No user authenticated")
+    );
+  }
+
+  const role = req.user.role;
+  if (role !== "admin") {
+    return res.json(new ApiError(403, null, "Forbidden - Admin access only"));
+  }
+
+  next();
+});
